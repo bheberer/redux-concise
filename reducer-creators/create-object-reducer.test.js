@@ -11,11 +11,12 @@ describe('createObjectReducer', () => {
   beforeEach(() => {
     reducer = createObjectReducer(initialState, {
       OVERRIDE_ACTION: 'override',
-      RESET_ACTION: 'reset'
-    }, {
-      bool: createBooleanReducer(false, {
-        TRUE_ACTION: 'true'
-      })
+      RESET_ACTION: 'reset',
+      PIPE: {
+        bool: createBooleanReducer(false, {
+          TRUE_ACTION: 'true'
+        })
+      }
     });
   });
 
