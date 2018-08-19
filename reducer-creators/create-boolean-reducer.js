@@ -1,11 +1,12 @@
-import { toggle } from './action-handlers';
+import { toggle, resetState } from './action-handlers';
 
 const createBooleanReducer = (initialState, actionTypes) =>
   (state = initialState, action) => {
     const booleanHandlers = {
       true: () => true,
       false: () => false,
-      toggle: () => toggle(state)
+      toggle: () => toggle(state),
+      reset: () => resetState(initialState)
     };
 
     const handlerType = actionTypes[action.type];

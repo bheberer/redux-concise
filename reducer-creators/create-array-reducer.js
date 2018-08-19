@@ -1,4 +1,4 @@
-import { push, pop, concat, clear, filter, map } from './action-handlers';
+import { push, pop, concat, clear, filter, map, resetState } from './action-handlers';
 
 const createArrayReducer = (initialState = [], actionTypes) =>
   (state = initialState, action) => {
@@ -8,7 +8,8 @@ const createArrayReducer = (initialState = [], actionTypes) =>
       concat: () => concat(state, action),
       clear: () => clear(state, action),
       filter: () => filter(state, action),
-      map: () => map(state, action)
+      map: () => map(state, action),
+      reset: () => resetState(initialState)
     };
 
     const handlerType = actionTypes[action.type];

@@ -55,4 +55,9 @@ describe('createArrayReducer', () => {
     });
     expect(nextState).toEqual([10, 15]);
   });
+
+  it('should reset to initialState if reset action is found', () => {
+    const result = reducer(undefined, { type: 'RESET_ACTION' });
+    expect(result).toEqual([]);
+  })
 });
