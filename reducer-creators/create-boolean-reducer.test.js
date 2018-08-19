@@ -6,7 +6,8 @@ describe('createBooleanReducer', () => {
     reducer = createBooleanReducer(false, {
       TRUE_ACTION: 'true',
       FALSE_ACTION: 'false',
-      TOGGLE_ACTION: 'toggle'
+      TOGGLE_ACTION: 'toggle',
+      RESET_ACTION: 'reset'
     });
   });
 
@@ -34,4 +35,9 @@ describe('createBooleanReducer', () => {
     const nextState = reducer(false, { type: 'TOGGLE_ACTION' });
     expect(nextState).toBe(true);
   });
+
+  it('should reset to initialState if reset action is found', () => {
+    const result = reducer(undefined, { type: 'RESET_ACTION' });
+    expect(result).toEqual(false);
+  })
 });
