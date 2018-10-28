@@ -23,14 +23,18 @@ Currently, the reducer creators included in the library are as follows:
 Let's create the reducers for the todo app written in the Redux documentation with redux-func so we can see how concise we can get our code to be.
 
 ```js
-const visibilityFilter = createValReducer(SHOW_ALL, {
-  SET_VISIBILITY_FILTER: 'update'
-})
+const visibilityFilter = createValReducer(
+  SHOW_ALL, 
+  { SET_VISIBILITY_FILTER: 'update' }
+)
 
-const todos = createArrReducer([], {
-  ADD_TODO: 'push',
-  TOGGLE_TODO: 'updateValueAtIndex'
-})
+const todos = createArrReducer(
+  [], 
+  {
+    ADD_TODO: 'push',
+    TOGGLE_TODO: 'updateValueAtIndex'
+  }
+)
 ```
 
 ## Actions
@@ -69,12 +73,59 @@ While I've tried my best to include a lot of the most common use cases in redux-
 As an example, the standard `push` handler in redux-func adds a value to the back of an array. Now, you want to add something to the front of the array instead. Here's how you would do it.
 
 ```js
-const reducer = createArrReducer([], {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-  ADD_TO_FRONT: 'addToFront'
-}, {
-  addToFront: (state, action) => [...state, action.payload]
-})
+const reducer = createArrReducer(
+  [], 
+  { ADD_TO_FRONT: 'addToFront' }, 
+  { addToFront: (state, action) => [...state, action.payload] }
+)
 ```
+
+## Composition
+Let's say that we want to have a slice of state that includes some basic value properties as well as an array. How would we update said array when it's contained within the larger state object? Well, we would have to do something like this.
+
+```js
+const comments = createArrReducer(
+  [],
+  { 
+    ADD_COMMENT: 'push',
+    EDIT_COMMENT: 'updateAtIndex' 
+  }
+)
+
+const post = createObjReducer(
+  { user: 'bheberer', content: 'hey there', comments: [] }
+  {
+    ADD_COMMENT: 'comments',
+    EDIT_COMMENT: 'comments',
+  }, 
+  {
+    comments
+  }
+)
+```
+
+update the entirety of the array within the action creator and then use the `update` action handler that comes standard with the createObjReducer function. In order to be able to update the array before dispatching it to our reducers, we would most likely have to use a Thunk. Let's see what that would look like.
+
+```js
+
+```
+
+
+With the `combineReducers` function that comes with redux out of the box, we're able to compose a bunch of reducers into a single, larger reducer function. So, if you had an object reducer and an array reducer, they would become two different properties of larger object in state.
+
+In redux-func, I've included an option for reducers to be 'piped' into object reducers, which lets you get the functionality of having a completely separate reducer for particular property in state while keeping it within a specific state object.
+
+To show you guys how it works, lets say we're writing a Twitter-like application, and we have some redux state set up for a post. In our slice of state for our post, we want to store the user that created the post, the content of the post, as well as an array of comments on the post. This simply isn't something that can work if we're using `combineReducers`.
+
+```js
+const post = createObjReducer(
+  { user: 'bheberer', content: 'hey there', comments: [] },
+  { ADD_COMMENT: 'push' }
+)
+
+const cominedReducer = combineR
+```
+
 ```js
 import { createArrayReducer } from 'redux-func';
 

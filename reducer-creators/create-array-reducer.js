@@ -6,12 +6,13 @@ import {
   filter,
   map,
   resetState
-} from './action-handlers';
+} from './action-handlers'
 
-const createArrayReducer = (initialState = [], actionTypes, customHandlers = {}) => (
-  state = initialState,
-  action
-) => {
+const createArrayReducer = (
+  initialState = [],
+  actionTypes,
+  customHandlers = {}
+) => (state = initialState, action) => {
   const arrayHandlers = {
     push: () => push(state, action),
     pop: () => pop(state, action),
@@ -22,10 +23,10 @@ const createArrayReducer = (initialState = [], actionTypes, customHandlers = {})
     map: () => map(state, action),
     reset: () => resetState(initialState),
     ...customHandlers
-  };
+  }
 
-  const handlerType = actionTypes[action.type];
-  return handlerType ? arrayHandlers[handlerType]() : state;
-};
+  const handlerType = actionTypes[action.type]
+  return handlerType ? arrayHandlers[handlerType]() : state
+}
 
-export default createArrayReducer;
+export default createArrayReducer
