@@ -1,13 +1,14 @@
-export const pipeReducers = (reducer, reducersToPipe, initialState) =>
-  (state = initialState, action) => {
-    const namesOfReducersToPipe = Object.keys(reducersToPipe);
-    const nextState = reducer(state, action);
-    const stateToPipe = {};
+export const pipeReducers = (reducer, innerReducers, initialState) => (
+  state = initialState,
+  action
+) => {
+  const namesOfInnerReducers = Object.keys(innerReducers);
+  const nextState = reducer(state, action);
+  const stateToPipe = {};
 
-    namesOfReducersToPipe.forEach(name => {
-      stateToPipe[name] = reducersToPipe[name](state[name], action)
-    });
+  namesOfInnerReducers.forEach(name => {
+    stateToPipe[name] = innerReducers[name](state[name], action);
+  });
 
-    return { ...nextState, ...stateToPipe };
-  };
-  
+  return { ...nextState, ...stateToPipe };
+};
