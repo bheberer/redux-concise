@@ -8,9 +8,21 @@ export const updateValueAtIndex = (state, action) =>
   Object.assign([...state], {
     [action.index]:
       typeof action.payload === 'function'
-        ? action.payload(state[index])
+        ? action.payload(state[action.index])
         : action.payload
   })
+
+// export const updateValueAtIndex = (state, action) => [
+//   ...state.slice(0, action.index),
+//   typeof action.payload === 'function'
+//     ? action.payload(state[action.index])
+//     : action.payload,
+//   ...state.slice(action.index + 1)
+// ]
+
+// export const updateValueAtIndex = (state, action) => [
+// 'fuck'
+// ]
 
 export const clear = (state, action) => []
 

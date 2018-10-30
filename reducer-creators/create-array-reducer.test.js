@@ -3,16 +3,23 @@ import createArrayReducer from './create-array-reducer'
 describe('createArrayReducer', () => {
   let reducer
   beforeEach(() => {
-    reducer = createArrayReducer([], {
-      PUSH_ACTION: 'push',
-      POP_ACTION: 'pop',
-      UPDATE_INDEX_ACTION: 'updateValueAtIndex',
-      CONCAT_ACTION: 'concat',
-      CLEAR_ACTION: 'clear',
-      FILTER_ACTION: 'filter',
-      MAP_ACTION: 'map',
-      RESET_ACTION: 'reset'
-    })
+    reducer = createArrayReducer(
+      [], 
+      {
+        PUSH_ACTION: 'push',
+        POP_ACTION: 'pop',
+        UPDATE_INDEX_ACTION: 'updateValueAtIndex',
+        CONCAT_ACTION: 'concat',
+        CLEAR_ACTION: 'clear',
+        FILTER_ACTION: 'filter',
+        MAP_ACTION: 'map',
+        RESET_ACTION: 'reset',
+        ADD_TO_FRONT_ACTION: 'addToFront'
+      }, 
+      {
+        addToFront: (state, action) => [action.payload, ...state]
+      }
+    )
   })
 
   it('should return initialState when action is not found', () => {
@@ -54,7 +61,7 @@ describe('createArrayReducer', () => {
   it('should map array w/ appropriate map function when map action is found', () => {
     const nextState = reducer([5, 10], {
       type: 'MAP_ACTION',
-      map: (element, index) => element + 5
+      payload: (element, index) => element + 5
     })
     expect(nextState).toEqual([10, 15])
   })
@@ -66,9 +73,18 @@ describe('createArrayReducer', () => {
 
   it('should update index w/ value if update action is found', () => {
     const result = reducer(['dog', 'cat'], {
-      type: 'UPDATE_ACTION',
+      type: 'UPDATE_INDEX_ACTION',
+      index: 1,
       payload: (value) => value + 'dog'
     })
     expect(result).toEqual(['dog', 'catdog'])
+  })
+
+  it('should utilize customHandlers properly', () => {
+    const result = reducer(['dog'], {
+      type: 'ADD_TO_FRONT_ACTION',
+      payload: 'cat'
+    })
+    expect(result).toEqual(['cat', 'dog'])
   })
 })

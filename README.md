@@ -38,13 +38,13 @@ const todos = createArrReducer(
 ```
 
 ## Actions
-This concision is achieved through some basic assumptions that the reducers make about the actions that they recieve. For the most part,they expect to recieve actions that follow the Flux Standard Action rules, with some exceptions.
+This concision is achieved through some basic assumptions that the reducers make about the actions that they recieve. For the most part, they expect to recieve actions that follow the Flux Standard Action rules, with some exceptions.
 
 There are three types of actions to be used with redux-func. Actions that only require a type field, actions that require both a type and payload field and actions that require a type, payload and something extra.
 
 - Boolean
-  - set true: type only
-  - set false: type only
+  - true: type only
+  - false: type only
   - toggle: type only
   - reset: type only
 - Value
@@ -53,7 +53,7 @@ There are three types of actions to be used with redux-func. Actions that only r
 - Array
   - push: type + payload (value to be pushed)
   - pop: type only
-  - update index: type + payload (new value or update function) + index
+  - updateAtIndex: type + payload (new value or update function) + index
     - example of an update function ``` (elem) => elem + 1 ```
   - concat: type + payload (array to be concatenated)
   - clear: type only
@@ -81,7 +81,7 @@ const reducer = createArrReducer(
 ```
 
 ## Composition
-Let's say that we want to have a slice of state that includes some basic value properties as well as an array. How would we update said array when it's contained within the larger state object? Well, we would have to do something like this.
+In createObjReducer, there is an argument called `innerReducers` that lets you use a completely separate reducer for a particular property within your slice of state. For example, if we're creating a Twitter-like app, we might want to have a slice of state for a post that includes the user that created the post, the content of the post, as well as the comments on that post. Here's how we would do it using `innerReducers`.
 
 ```js
 const comments = createArrReducer(
@@ -95,114 +95,109 @@ const comments = createArrReducer(
 const post = createObjReducer(
   { user: 'bheberer', content: 'hey there', comments: [] }
   {
-    ADD_COMMENT: 'comments',
-    EDIT_COMMENT: 'comments',
+    EDIT_CONTENT: 'update'
   }, 
+  { /* This is where customHandlers would go */ },
   {
     comments
   }
 )
 ```
+Here, we've created a completely separate reducer for the `comments` array, and piped it into the `post` reducer. This allows us to use all of the functionality that createArrReducer provides while keeping the array within a specified slice of state.
 
-update the entirety of the array within the action creator and then use the `update` action handler that comes standard with the createObjReducer function. In order to be able to update the array before dispatching it to our reducers, we would most likely have to use a Thunk. Let's see what that would look like.
+## API
 
+All of the reducer creators barring createObjReducer 
+
+### createValueReducer
 ```js
-
-```
-
-
-With the `combineReducers` function that comes with redux out of the box, we're able to compose a bunch of reducers into a single, larger reducer function. So, if you had an object reducer and an array reducer, they would become two different properties of larger object in state.
-
-In redux-func, I've included an option for reducers to be 'piped' into object reducers, which lets you get the functionality of having a completely separate reducer for particular property in state while keeping it within a specific state object.
-
-To show you guys how it works, lets say we're writing a Twitter-like application, and we have some redux state set up for a post. In our slice of state for our post, we want to store the user that created the post, the content of the post, as well as an array of comments on the post. This simply isn't something that can work if we're using `combineReducers`.
-
-```js
-const post = createObjReducer(
-  { user: 'bheberer', content: 'hey there', comments: [] },
-  { ADD_COMMENT: 'push' }
+const reducer = createValueReducer(
+  initialState: value,
+  actionTypes: Object,
+  customHandlers: Object
 )
+```
+Higher order function that accepts an initialState value, an object of action types that the reducer will handle, and an object of custom handler functions.
 
-const cominedReducer = combineR
+The action types that createValueReducer handles by default are:
+- update
+- reset
+
+Example actionTypes object:
+```js
+{
+  UPDATE_VAL: 'update',
+  RESET_VAL: 'reset'
+}
 ```
 
+The actual action shapes look like this:
 ```js
-import { createArrayReducer } from 'redux-func';
-
-// actions that are data-reliant must be constructed with a payload property
-const addAction = {
-  type: 'ADD_TO_ARRAY',
-  payload: 'data'
-};
-
-// filter + map action handlers require that the filter/map function be included in the action
-const removeAction = {
-  type: 'REMOVE_FROM_ARRAY',
-  payload: 'data',
-  filter: (element, action) => element !== action.payload
-};
-
-// this action needs no data, so no payload is given
-const clearAction = {
-  type: 'CLEAR_ARRAY'
-};
-
-function reducer(state = 'hello', action) {
-  switch (action.type) {
-    case SAY_HI:
-      return action.payload;
-    case SAY_GOODBYE:
-      return action.payload;
-
-    default:
-      return state;
-  }
+const updateAction = {
+  type: 'UPDATE_VAL',
+  payload: 10
 }
 
-const reducer = createArrayReducer([], {
-  ADD_TO_ARRAY: 'push',
-  REMOVE_FROM_ARRAY: 'filter',
-  CLEAR_ARRAY: 'clear'
-});
+const resetAction = {
+  type: 'RESET_VAL'
+}
 ```
 
-Each reducer creator comes with a set of default action handlers that you can assign to an action type.
-
-## Composition
-
-If you want have an object in your redux state that contains a property that you want to control via another, more specific
-reducer, you can utilize the special `PIPE` action type to compose reducers into your object reducer.
-
+Example customHandlers object:
 ```js
-import { createObjectReducer, createArrayReducer } from 'redux-func';
-
-const reducer = createObjectReducer(
-  {},
-  {
-    OVERRIDE_PROPERTIES: 'override',
-    RESET_OBJECT: 'reset'
-  },
-  {
-    arr: createArrayReducer([], {
-      ADD_TO_ARRAY: 'push'
-    })
-  }
-);
+{
+  increment: (state, action) => action.payload + 1
+}
 ```
 
-Now, whatever slice of state that we create with `reducer` will contain an `arr` property that is controlled by it's own reducer,
-so you can take advantage of all of the things that createArrayReducer gives you.
-
-## Creating Custom Reducers
-
+### createBooleanReducer
 ```js
-const enhancedArrReducer = createArrReducer(
-  [],
-  {
-    ADD: 'push'
-  },
-  {
-    appendToFront: (state, action) => [...action.payload, ...state]
-  }
-);
+const reducer = createBoolReducer(
+  initialState: value,
+  actionTypes: Object,
+  customHandlers: Object
+)
+```
+Higher order function that accepts an initialState value, an object of action types that the reducer will handle, and an object of custom handler functions.
+
+The action types that createValueReducer handles by default are:
+- true
+- false
+- toggle
+- reset
+
+Example actionTypes object:
+```js
+{
+  SET_TRUE: 'true',
+  SET_FALSE: 'false',
+  TOGGLE_BOOL: 'toggle',
+  RESET_BOOL: 'reset'
+}
+```
+
+The actual action shapes look like this:
+```js
+const trueAction = {
+  type: 'SET_TRUE'
+}
+
+const falseAction = {
+  type: 'SET_FALSE'
+}
+
+const toggleAction = {
+  type: 'TOGGLE_BOOL'
+}
+
+const resetAction = {
+  type: 'RESET_BOOL'
+}
+```
+
+Example customHandlers object:
+```js
+{
+  increment: (state, action) => action.payload + 1
+}
 ```

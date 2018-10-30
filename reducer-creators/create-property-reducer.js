@@ -11,7 +11,7 @@ const createPropertyReducer = (initialState, actionTypes, customHandlers = null)
   };
 
   const handlerType = actionTypes[action.type];
-  return handlerType ? propertyHandlers[handlerType]() : state;
+  return handlerType ? propertyHandlers[handlerType](state, action) : state;
 };
 
 export default createPropertyReducer;

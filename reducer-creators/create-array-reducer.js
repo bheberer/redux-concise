@@ -5,6 +5,7 @@ import {
   clear,
   filter,
   map,
+  updateValueAtIndex,
   resetState
 } from './action-handlers'
 
@@ -26,7 +27,7 @@ const createArrayReducer = (
   }
 
   const handlerType = actionTypes[action.type]
-  return handlerType ? arrayHandlers[handlerType]() : state
+  return handlerType ? arrayHandlers[handlerType](state, action) : state
 }
 
 export default createArrayReducer
