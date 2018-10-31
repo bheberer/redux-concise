@@ -1,10 +1,10 @@
-import createPropertyReducer from './create-property-reducer';
+import createValueReducer from './create-value-reducer';
 
 describe('createPropertyReducer', () => {
   let reducer;
   beforeEach(() => {
-    reducer = createPropertyReducer('redux', {
-      OVERRIDE_ACTION: 'override',
+    reducer = createValueReducer('redux', {
+      OVERRIDE_ACTION: 'update',
       RESET_ACTION: 'reset'
     })
   });

@@ -1,5 +1,5 @@
-import createReducers from './reducer-creators';
+import reducerCreators from './reducer-creators';
 
 export default {
-  ...createReducers
+  ...reducerCreators
 };

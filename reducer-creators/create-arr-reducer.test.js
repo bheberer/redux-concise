@@ -1,14 +1,14 @@
-import createArrayReducer from './create-array-reducer'
+import createArrReducer from './create-arr-reducer'
 
-describe('createArrayReducer', () => {
+describe('createArrReducer', () => {
   let reducer
   beforeEach(() => {
-    reducer = createArrayReducer(
+    reducer = createArrReducer(
       [], 
       {
         PUSH_ACTION: 'push',
         POP_ACTION: 'pop',
-        UPDATE_INDEX_ACTION: 'updateValueAtIndex',
+        UPDATE_INDEX_ACTION: 'updateIndex',
         CONCAT_ACTION: 'concat',
         CLEAR_ACTION: 'clear',
         FILTER_ACTION: 'filter',

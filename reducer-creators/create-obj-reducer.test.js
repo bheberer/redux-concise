@@ -1,5 +1,5 @@
-import createObjectReducer from './create-object-reducer'
-import createBooleanReducer from './create-boolean-reducer'
+import createObjReducer from './create-obj-reducer'
+import createBoolReducer from './create-bool-reducer'
 
 describe('createObjectReducer', () => {
   const initialState = {
@@ -10,16 +10,17 @@ describe('createObjectReducer', () => {
   let reducer
 
   beforeEach(() => {
-    bool = createBooleanReducer(false, {
+    bool = createBoolReducer(false, {
       TOGGLE_ACTION: 'toggle'
     })
 
-    reducer = createObjectReducer(initialState, {
+    reducer = createObjReducer(initialState, {
       UPDATE_ACTION: 'update',
       RESET_ACTION: 'reset',
-      CLEAR_ACTION: 'clear',
-      TOGGLE_ACTION: 'bool'
-    }, {
+      CLEAR_ACTION: 'clear'
+    },
+    {},
+    {
       bool
     })
   })

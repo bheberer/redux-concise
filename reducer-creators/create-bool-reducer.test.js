@@ -1,9 +1,9 @@
-import createBooleanReducer from './create-boolean-reducer';
+import createBoolReducer from './create-bool-reducer';
 
-describe('createBooleanReducer', () => {
+describe('createBoolReducer', () => {
   let reducer;
   beforeEach(() => {
-    reducer = createBooleanReducer(false, {
+    reducer = createBoolReducer(false, {
       TRUE_ACTION: 'true',
       FALSE_ACTION: 'false',
       TOGGLE_ACTION: 'toggle',

@@ -9,7 +9,7 @@ import {
   resetState
 } from './action-handlers'
 
-const createArrayReducer = (
+const createArrReducer = (
   initialState = [],
   actionTypes,
   customHandlers = {}
@@ -17,7 +17,7 @@ const createArrayReducer = (
   const arrayHandlers = {
     push: () => push(state, action),
     pop: () => pop(state, action),
-    updateValueAtIndex: () => updateValueAtIndex(state, action),
+    updateIndex: () => updateValueAtIndex(state, action),
     concat: () => concat(state, action),
     clear: () => clear(state, action),
     filter: () => filter(state, action),
@@ -30,4 +30,4 @@ const createArrayReducer = (
   return handlerType ? arrayHandlers[handlerType](state, action) : state
 }
 
-export default createArrayReducer
+export default createArrReducer

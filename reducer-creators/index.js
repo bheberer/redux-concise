@@ -1,13 +1,11 @@
-import createArrayReducer from '.create-array-reducer';
-import createBooleanReducer from '.create-boolean-reducer';
-import createPropertyReducer from '.create-property-reducer';
-import createObjectReducer from './create-object-reducer';
-import * as actionHandlers from './action-handlers';
+import createArrReducer from '.create-arr-reducer';
+import createBoolReducer from '.create-bool-reducer';
+import createValueReducer from '.create-value-reducer';
+import createObjReducer from './create-obj-reducer';
 
 export default reducerCreators = {
-  ...actionHandlers,
-  createArrayReducer,
-  createBooleanReducer,
-  createPropertyReducer,
-  createObjectReducer
+  createArrReducer,
+  createBoolReducer,
+  createValueReducer,
+  createObjReducer
 };

@@ -1,6 +1,6 @@
 import { toggle, resetState } from './action-handlers'
 
-const createBooleanReducer = (
+const createBoolReducer = (
   initialState,
   actionTypes,
   customHandlers = {}
@@ -17,4 +17,4 @@ const createBooleanReducer = (
   return handlerType ? booleanHandlers[handlerType](state, action) : state
 }
 
-export default createBooleanReducer
+export default createBoolReducer

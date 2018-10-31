@@ -46,26 +46,42 @@ There are three types of actions to be used with redux-func. Actions that only r
   - true: type only
   - false: type only
   - toggle: type only
-  - reset: type only
+  - reset (to initialState): type only
 - Value
   - update: type + payload
   - reset: type only
 - Array
   - push: type + payload (value to be pushed)
   - pop: type only
-  - updateAtIndex: type + payload (new value or update function) + index
+  - updateIndex: type + payload (new value or update function) + index
     - example of an update function ``` (elem) => elem + 1 ```
   - concat: type + payload (array to be concatenated)
   - clear: type only
   - filter: type + payload (filter function)
   - map: type + payload (map function)
-  - reset: type only
+  - reset (to initialState): type only
 - Object
-  - add: type + payload (object containing values to add)
-  - remove: type + payload (array with values to remove)
-  - update: type + payload (object to update state with)
-  - reset: type only
+  - update (spread): type + payload (object to update state with)
+  - reset (to initialState): type only
   - clear: type only
+
+Misc. Action Examples:
+```js
+trueAction = {
+  type: 'SET_TRUE'
+}
+
+filterAction = {
+  type: 'NO_CATS',
+  payload: (elem, index) => elem !== 'cat'
+}
+
+updateIndexAction = {
+  type: 'EDIT_COMMENT',
+  index: 10,
+  payload: 'new comment'
+}
+```
 
 ## Customizing Your Reducers
 While I've tried my best to include a lot of the most common use cases in redux-func, there's more than likely going to be times where redux-func doesn't include an action that you want to use. Because of this, I've included an extra parameter to all redux-func reducers called `customHandlers`, which is an object in which you can include whatever custom action handler functions you want and use them in the same way you would use the standard, included handlers.
@@ -88,7 +104,7 @@ const comments = createArrReducer(
   [],
   { 
     ADD_COMMENT: 'push',
-    EDIT_COMMENT: 'updateAtIndex' 
+    EDIT_COMMENT: 'updateIndex' 
   }
 )
 
@@ -121,36 +137,25 @@ Higher order function that accepts an initialState value, an object of action ty
 
 The action types that createValueReducer handles by default are:
 - update
-- reset
+- reset (to initialState)
 
-Example actionTypes object:
+Example usage:
 ```js
-{
-  UPDATE_VAL: 'update',
-  RESET_VAL: 'reset'
-}
+const counter = createValueReducer(
+  0, 
+  {
+    INCREMENT: 'increment',
+    DECREMENET: 'decrement',
+    RESET: 'reset'
+  }, 
+  {
+    increment: (state, action) => action.payload + 1,
+    decrement: (state, action) => action.payload - 1
+  }
+)
 ```
 
-The actual action shapes look like this:
-```js
-const updateAction = {
-  type: 'UPDATE_VAL',
-  payload: 10
-}
-
-const resetAction = {
-  type: 'RESET_VAL'
-}
-```
-
-Example customHandlers object:
-```js
-{
-  increment: (state, action) => action.payload + 1
-}
-```
-
-### createBooleanReducer
+### createBoolReducer
 ```js
 const reducer = createBoolReducer(
   initialState: value,
@@ -164,40 +169,94 @@ The action types that createValueReducer handles by default are:
 - true
 - false
 - toggle
-- reset
+- reset (to initialState)
 
-Example actionTypes object:
+Example usage:
 ```js
-{
-  SET_TRUE: 'true',
-  SET_FALSE: 'false',
-  TOGGLE_BOOL: 'toggle',
-  RESET_BOOL: 'reset'
-}
+const isFetching = createBoolReducer(
+  false,
+  {
+    FETCHING: 'true',
+    RECEIVED: 'false'
+  }
+)
 ```
 
-The actual action shapes look like this:
+### createArrReducer
 ```js
-const trueAction = {
-  type: 'SET_TRUE'
-}
+const reducer = createArrReducer(
+  initialState: value,
+  actionTypes: Object,
+  customHandlers: Object
+)
+```
+Higher order function that accepts an initialState value, an object of action types that the reducer will handle, and an object of custom handler functions.
 
-const falseAction = {
-  type: 'SET_FALSE'
-}
+The action types that createValueReducer handles by default are:
+- push
+- pop
+- updateIndex
+- concat
+- clear
+- filter
+- map
+- reset (to initialState)
 
-const toggleAction = {
-  type: 'TOGGLE_BOOL'
-}
-
-const resetAction = {
-  type: 'RESET_BOOL'
-}
+Example usage:
+```js
+const comments = createArrReducer(
+  [],
+  {
+    ADD_COMMENT: 'push',
+    DELETE_COMMENT: 'filter',
+    EDIT_COMMENT: 'updateIndex',
+    DELETE_ALL_COMMENTS: 'clear'
+  }
+)
 ```
 
-Example customHandlers object:
+### createObjReducer
 ```js
-{
-  increment: (state, action) => action.payload + 1
-}
+const reducer = createObjReducer(
+  initialState: value,
+  actionTypes: Object,
+  customHandlers: Object,
+  innerReducers: Object
+)
+```
+Higher order function that accepts an initialState value, an object of action types that the reducer will handle, an object of custom handler functions and an object of reducers to be piped into the object.
+
+The action types that createValueReducer handles by default are:
+- update (spread)
+- clear
+- reset (to initialState)
+
+Example usage:
+```js
+const comments = createArrReducer(
+  [],
+  {
+    ADD_COMMENT: 'push',
+    DELETE_COMMENT: 'filter',
+    EDIT_COMMENT: 'updateIndex',
+    DELETE_ALL_COMMENTS: 'clear'
+  }
+)
+
+const post = createObjReducer(
+  { 
+    poster: 'bheberer', 
+    content: 'first',
+    comments: []
+  },
+  {
+    UPDATE_OP_USERNAME: 'update',
+    EDIT_CONTENT: 'update',
+    DELETE: 'clear'
+  },
+  {},
+  {
+    comments
+  }
+)
 ```
