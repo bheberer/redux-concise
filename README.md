@@ -1,4 +1,4 @@
-# redux-func
+# redux-concise
 
 ## Introduction
 
@@ -9,7 +9,7 @@ This library was created with the intent of reducing the amount of boilerplate c
 This library is distrubuted on npm, and has no dependencies.
 
 ```
-npm install --save redux-func
+npm install --save redux-concise
 ```
 
 ## Data Structures
@@ -47,39 +47,39 @@ Below are tables showing what actions are handled by default for each reducer cr
 ### Boolean Actions:
 
 | Handler Name   | Type | Payload | Index |
-| ------ | :--: | :-----: | :---: |
-| true   | yes  |   no    |  no   |
-| false  | yes  |   no    |  no   |
-| toggle | yes  |   no    |  no   |
-| reset  | yes  |   no    |  no   |
+| -------------- | :--: | :-----: | :---: |
+| true           | yes  |   no    |  no   |
+| false          | yes  |   no    |  no   |
+| toggle         | yes  |   no    |  no   |
+| reset          | yes  |   no    |  no   |
 
 ### Value Actions:
 
 | Handler Name   | Type | Payload | Index |
-| ------ | :--: | :-----: | :---: |
-| update | yes  |   yes   |  no   |
-| reset  | yes  |   no    |  no   |
+| -------------- | :--: | :-----: | :---: |
+| update         | yes  |   yes   |  no   |
+| reset          | yes  |   no    |  no   |
 
 ### Array Actions:
 
 | Handler Name        | Type | Payload | Index |
-| ----------- | :--: | :-----: | :---: |
-| push        | yes  |   yes   |  no   |
-| pop         | yes  |   no    |  no   |
-| updateIndex | yes  |   yes   |  yes  |
-| concat      | yes  |   yes   |  no   |
-| clear       | yes  |   no    |  no   |
-| filter      | yes  |   yes   |  no   |
-| map         | yes  |   yes   |  no   |
-| reset       | yes  |   no    |  no   |
+| ------------------- | :--: | :-----: | :---: |
+| push                | yes  |   yes   |  no   |
+| pop                 | yes  |   no    |  no   |
+| updateIndex         | yes  |   yes   |  yes  |
+| concat              | yes  |   yes   |  no   |
+| clear               | yes  |   no    |  no   |
+| filter              | yes  |   yes   |  no   |
+| map                 | yes  |   yes   |  no   |
+| reset               | yes  |   no    |  no   |
 
 ### Object Actions:
 
 | Handler Name   | Type | Payload | Index |
-| ------ | :--: | :-----: | :---: |
-| update | yes  |   yes   |  no   |
-| reset  | yes  |   no    |  no   |
-| clear  | yes  |   no    |  no   |
+| -------------- | :--: | :-----: | :---: |
+| update         | yes  |   yes   |  no   |
+| reset          | yes  |   no    |  no   |
+| clear          | yes  |   no    |  no   |
 
 Misc. Action Examples:
 
@@ -181,7 +181,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Name | Description                                           |
+| Name   | Description                                           |
 | ------ | :---------------------------------------------------- |
 | update | updates value with payload (can be value or function) |
 | reset  | reset value to initial state                          |
@@ -213,7 +213,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Name | Description                    |
+| Name   | Description                    |
 | ------ | :----------------------------- |
 | true   | sets boolean to true           |
 | false  | sets boolean to false          |
@@ -243,7 +243,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Name      | Description                                                     |
+| Name        | Description                                                     |
 | ----------- | :-------------------------------------------------------------- |
 | push        | push payload to end of array                                    |
 | pop         | remove element from end of array                                |
@@ -280,7 +280,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Name | Description                     |
+| Name   | Description                     |
 | ------ | :------------------------------ |
 | update | spreads payload to state object |
 | clear  | empties state object            |
