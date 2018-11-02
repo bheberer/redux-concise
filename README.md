@@ -98,7 +98,31 @@ const reducer = createArrReducer([], {
 ```
 
 ## Composition
-In createObjReducer, there is an argument called `innerReducers` that lets you use a completely separate reducer for a particular property within your slice of state. For example, if we're creating a Twitter-like app, we might want to have a slice of state for a post that includes the user that created the post, the content of the post, as well as the comments on that post. Here's how we would do it using `innerReducers`.
+In createObjReducer, there is an argument called `innerReducers` that lets you use a completely separate reducer for a particular property within your output state object. For example, if we're creating a Twitter-like app, we might want to have a slice of state for a post that includes the user that created the post, the content of the post, as well as the comments on that post.
+
+Lets say we're trying to create a Twitter-like app. We might want to have a slice of state for a post that includes the user that create the post, the content of the post, as well as the comments associated with that post. 
+
+Without the concept of `innerReducers`, we would have to implement this reducer like this. (Note that this wouldn't be an ideal way to shape this state. See the [redux docs](https://redux.js.org/recipes/structuringreducers/normalizingstateshape) for more info, just using this as an example)
+```js
+const post = createObjReducer({
+  user: 'bheberer', 
+  content: 'hey there', 
+  comments: []
+}, {
+  EDIT_CONTENT: 'update',
+  ADD_COMMENT: 'addComment',
+  EDIT_COMMENT: 'editComment'
+}, {
+  addComment: (state, action) => [...state, action.payload],
+  editComment: (state, action) => Object.assign([...state], {
+    [action.index]:
+      typeof action.payload === 'function'
+        ? action.payload(state[action.index])
+        : action.payload
+  })
+})
+```
+Because our comments array is contained within this state object, we have to manually add functionality in order to update it appropriately. However, you may have noticed that we're basically just adding `push` and `updateIndex` functionality, which is already included in `createArrReducer`. `innerReducers` lets us utilize this built-in functionality. 
 
 ```js
 const comments = createArrReducer([], { 
@@ -116,7 +140,7 @@ const post = createObjReducer({
   comments
 })
 ```
-Here, we've created a completely separate reducer for the `comments` array, and piped it into the `post` reducer. This allows us to use all of the functionality that createArrReducer provides while keeping the array within a specified slice of state.
+Here, we've created a completely separate reducer for the `comments` array, and piped it into the `post` reducer. This allows us to use all of the functionality that createArrReducer provides while keeping the array within the specified state object.
 
 ## API
 
