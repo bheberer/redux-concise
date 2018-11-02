@@ -1,13 +1,11 @@
 import { updateObjectProps, resetState, clearObject } from './action-handlers'
-import { pipeReducers } from '../utils'
 
 const createObjReducer = (
   initialState,
   actionTypes,
   customHandlers = {},
   innerReducers = {}
-) => /*{
-  const sourceReducer = */(state = initialState, action) => {
+) => (state = initialState, action) => {
     const objectHandlers = {
       update: () => updateObjectProps(state, action),
       clear: () => clearObject(state, action),
@@ -27,10 +25,5 @@ const createObjReducer = (
     const handlerType = actionTypes[action.type]
     return handlerType ? objectHandlers[handlerType](pipedState, action) : pipedState
   }
-
-  // return innerReducers && actionTypes[action.type] !== 'clear'
-  //   ? pipeReducers(sourceReducer, innerReducers, initialState)
-  //   : sourceReducer
-// }
 
 export default createObjReducer

@@ -5,7 +5,7 @@ const createValueReducer = (initialState, actionTypes, customHandlers = null) =>
   action
 ) => {
   const propertyHandlers = {
-    update: () => overrideStateProp(action),
+    update: () => overrideStateProp(state, action),
     reset: () => resetState(initialState),
     ...customHandlers
   };

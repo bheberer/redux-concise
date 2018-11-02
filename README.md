@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This library was created with the intent of reducing the amount of boilerplate code needed to write Redux reducers. It is a collection of reducer creators, which are higher order functions that output a fully functional reducer. The reducer creators provided here help to create reducers for some of the most common use cases for different JavaScript data structures.
+This library was created with the intent of reducing the amount of boilerplate code needed to write Redux reducers. It is a collection of reducer creators, which are higher order functions that output a fully functional reducer. The reducer creators provided here help to create reducers for some of the most common use cases for different JavaScript data structures. This library is heavily inspired by [redux-data-structures](https://redux-data-structures.js.org/).
 
 ## Installation
 
@@ -12,65 +12,66 @@ This library is distrubuted on npm, and has no dependencies.
 npm install --save redux-func
 ```
 
-## Reducer Creators
-Currently, the reducer creators included in the library are as follows:
-- Boolean (set true, set false, toggle, reset to initial state)
-- Value (update, reset to initial state)
-- Array (push, pop, update at index, concat, clear, filter, map, reset to initial state)
-- Object (add, remove, update, clear, reset to initial state)
+## Data Structures
+redux-func contains reducer creators for the following data structures:
+- Boolean
+- Value
+- Array
+- Object
 
 ## Example
-Let's create the reducers for the todo app written in the Redux documentation with redux-func so we can see how concise we can get our code to be.
+Let's create the reducers for the todo app written in the [Redux documentation](https://redux.js.org/basics/reducers) with redux-func so we can see how concise we can get our code to be.
 
 ```js
-const visibilityFilter = createValReducer(
-  SHOW_ALL, 
-  { SET_VISIBILITY_FILTER: 'update' }
-)
+const visibilityFilter = createValReducer(SHOW_ALL, { 
+  SET_VISIBILITY_FILTER: 'update'
+})
 
-const todos = createArrReducer(
-  [], 
-  {
-    ADD_TODO: 'push',
-    TOGGLE_TODO: 'updateValueAtIndex'
-  }
-)
+const todos = createArrReducer([], {
+  ADD_TODO: 'push',
+  TOGGLE_TODO: 'updateValueAtIndex'
+})
 ```
 
 ## Actions
-This concision is achieved through some basic assumptions that the reducers make about the actions that they recieve. For the most part, they expect to recieve actions that follow the Flux Standard Action rules, with some exceptions.
+This concision is achieved through some basic assumptions that the reducers make about the actions that they recieve. For the most part, they expect to recieve actions that follow the [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) rules, with one exception. Below are tables showing what fields are required for each default action in redux-func.
 
-There are three types of actions to be used with redux-func. Actions that only require a type field, actions that require both a type and payload field and actions that require a type, payload and something extra.
 
-- Boolean
-  - true: type only
-  - false: type only
-  - toggle: type only
-  - reset (to initialState): type only
-- Value
-  - update: type + payload
-  - reset: type only
-- Array
-  - push: type + payload (value to be pushed)
-  - pop: type only
-  - updateIndex: type + payload (new value or update function) + index
-    - example of an update function ``` (elem) => elem + 1 ```
-  - concat: type + payload (array to be concatenated)
-  - clear: type only
-  - filter: type + payload (filter function)
-  - map: type + payload (map function)
-  - reset (to initialState): type only
-- Object
-  - update (spread): type + payload (object to update state with)
-  - reset (to initialState): type only
-  - clear: type only
+### Boolean Actions:
+| Name   | Type | Payload | Index |
+| ----   | :--: | :-----: | :---: |  
+| true   | yes  | no      | no    |
+| false  | yes  | no      | no    |
+| toggle | yes  | no      | no    |
+| reset  | yes  | no      | no    |
+
+### Value Actions:
+| Name     | Type | Payload  | Index |
+| ----     | :--: | :-----:  | :---: |  
+| update   | yes  | yes      | no    |
+| reset    | yes  | no       | no    |
+
+### Array Actions:
+| Name        | Type | Payload  | Index |
+| ----------- | :--: | :-----:  | :---: |  
+| push        | yes  | yes      | no    |
+| pop         | yes  | no       | no    |
+| updateIndex | yes  | yes      | yes   |
+| concat      | yes  | yes      | no    |
+| clear       | yes  | no       | no    |
+| filter      | yes  | yes      | no    |
+| map         | yes  | yes      | no    |
+| reset       | yes  | no       | no    |
+
+### Object Actions:
+| Name     | Type | Payload  | Index |
+| ----     | :--: | :-----:  | :---: |  
+| update   | yes  | yes      | no    |
+| reset    | yes  | no       | no    |
+| clear    | yes  | no       | no    |
 
 Misc. Action Examples:
 ```js
-trueAction = {
-  type: 'SET_TRUE'
-}
-
 filterAction = {
   type: 'NO_CATS',
   payload: (elem, index) => elem !== 'cat'
@@ -89,35 +90,31 @@ While I've tried my best to include a lot of the most common use cases in redux-
 As an example, the standard `push` handler in redux-func adds a value to the back of an array. Now, you want to add something to the front of the array instead. Here's how you would do it.
 
 ```js
-const reducer = createArrReducer(
-  [], 
-  { ADD_TO_FRONT: 'addToFront' }, 
-  { addToFront: (state, action) => [...state, action.payload] }
-)
+const reducer = createArrReducer([], { 
+  ADD_TO_FRONT: 'addToFront' 
+}, { 
+  addToFront: (state, action) => [...state, action.payload] 
+})
 ```
 
 ## Composition
 In createObjReducer, there is an argument called `innerReducers` that lets you use a completely separate reducer for a particular property within your slice of state. For example, if we're creating a Twitter-like app, we might want to have a slice of state for a post that includes the user that created the post, the content of the post, as well as the comments on that post. Here's how we would do it using `innerReducers`.
 
 ```js
-const comments = createArrReducer(
-  [],
-  { 
-    ADD_COMMENT: 'push',
-    EDIT_COMMENT: 'updateIndex' 
-  }
-)
+const comments = createArrReducer([], { 
+  ADD_COMMENT: 'push',
+  EDIT_COMMENT: 'updateIndex' 
+})
 
-const post = createObjReducer(
-  { user: 'bheberer', content: 'hey there', comments: [] }
-  {
-    EDIT_CONTENT: 'update'
-  }, 
-  { /* This is where customHandlers would go */ },
-  {
-    comments
-  }
-)
+const post = createObjReducer({ 
+  user: 'bheberer', 
+  content: 'hey there', 
+  comments: [] 
+}, {
+  EDIT_CONTENT: 'update'
+}, { /* This is where customHandlers would go */ }, {
+  comments
+})
 ```
 Here, we've created a completely separate reducer for the `comments` array, and piped it into the `post` reducer. This allows us to use all of the functionality that createArrReducer provides while keeping the array within a specified slice of state.
 
@@ -135,24 +132,22 @@ const reducer = createValueReducer(
 ```
 Higher order function that accepts an initialState value, an object of action types that the reducer will handle, and an object of custom handler functions.
 
-The action types that createValueReducer handles by default are:
-- update
-- reset (to initialState)
+### Default Action Handlers:
+| Action      | Description                                           |
+| ----------- | :---------------------------------------------------- |
+| update      | updates value with payload (can be value or function) |  
+| reset       | reset value to initial state                          |
 
 Example usage:
 ```js
-const counter = createValueReducer(
-  0, 
-  {
-    INCREMENT: 'increment',
-    DECREMENET: 'decrement',
-    RESET: 'reset'
-  }, 
-  {
-    increment: (state, action) => action.payload + 1,
-    decrement: (state, action) => action.payload - 1
-  }
-)
+const counter = createValueReducer(0, {
+  INCREMENT: 'increment',
+  DECREMENT: 'decrement',
+  RESET: 'reset'
+}, {
+  increment: (state, action) => action.payload + 1,
+  decrement: (state, action) => action.payload - 1
+})
 ```
 
 ### createBoolReducer
@@ -165,21 +160,20 @@ const reducer = createBoolReducer(
 ```
 Higher order function that accepts an initialState value, an object of action types that the reducer will handle, and an object of custom handler functions.
 
-The action types that createValueReducer handles by default are:
-- true
-- false
-- toggle
-- reset (to initialState)
+### Default Action Handlers:
+| Action      | Description               |
+| ------ | :----------------------------- |
+| true   | sets boolean to true           |  
+| false  | sets boolean to false          |
+| toggle | toggles boolean value          |      
+| reset  | reset boolean to initial state |
 
 Example usage:
 ```js
-const isFetching = createBoolReducer(
-  false,
-  {
-    FETCHING: 'true',
-    RECEIVED: 'false'
-  }
-)
+const isFetching = createBoolReducer(false, {
+  FETCHING: 'true',
+  RECEIVED: 'false'
+})
 ```
 
 ### createArrReducer
@@ -192,27 +186,26 @@ const reducer = createArrReducer(
 ```
 Higher order function that accepts an initialState value, an object of action types that the reducer will handle, and an object of custom handler functions.
 
-The action types that createValueReducer handles by default are:
-- push
-- pop
-- updateIndex
-- concat
-- clear
-- filter
-- map
-- reset (to initialState)
+### Default Action Handlers: 
+| Action      | Description                                                     |
+| ----------- | :-------------------------------------------------------------- |
+| push        | push payload to end of array                                    |
+| pop         | remove element from end of array                                |
+| updateIndex | update element at index with payload (can be value or function) |
+| concat      | concatenate payload to end of array                             |
+| clear       | clear array                                                     |
+| filter      | filter array with payload function                              |
+| map         | map array with payload function                                 |
+| reset       | reset array to initial state                                    |
 
 Example usage:
 ```js
-const comments = createArrReducer(
-  [],
-  {
-    ADD_COMMENT: 'push',
-    DELETE_COMMENT: 'filter',
-    EDIT_COMMENT: 'updateIndex',
-    DELETE_ALL_COMMENTS: 'clear'
-  }
-)
+const comments = createArrReducer([], {
+  ADD_COMMENT: 'push',
+  DELETE_COMMENT: 'filter',
+  EDIT_COMMENT: 'updateIndex',
+  DELETE_ALL_COMMENTS: 'clear'
+})
 ```
 
 ### createObjReducer
@@ -226,37 +219,32 @@ const reducer = createObjReducer(
 ```
 Higher order function that accepts an initialState value, an object of action types that the reducer will handle, an object of custom handler functions and an object of reducers to be piped into the object.
 
-The action types that createValueReducer handles by default are:
-- update (spread)
-- clear
-- reset (to initialState)
+
+### Default Action Handlers:
+| Action      | Description                     |
+| ----------- | :------------------------------ |
+| update      | spreads payload to state object |  
+| clear       | empties state object            |                          
+| reset       | reset object to initial state   |
 
 Example usage:
 ```js
-const comments = createArrReducer(
-  [],
-  {
-    ADD_COMMENT: 'push',
-    DELETE_COMMENT: 'filter',
-    EDIT_COMMENT: 'updateIndex',
-    DELETE_ALL_COMMENTS: 'clear'
-  }
-)
+const comments = createArrReducer([], {
+  ADD_COMMENT: 'push',
+  DELETE_COMMENT: 'filter',
+  EDIT_COMMENT: 'updateIndex',
+  DELETE_ALL_COMMENTS: 'clear'
+})
 
-const post = createObjReducer(
-  { 
-    poster: 'bheberer', 
-    content: 'first',
-    comments: []
-  },
-  {
-    UPDATE_OP_USERNAME: 'update',
-    EDIT_CONTENT: 'update',
-    DELETE: 'clear'
-  },
-  {},
-  {
-    comments
-  }
-)
+const post = createObjReducer({ 
+  poster: 'bheberer', 
+  content: 'first',
+  comments: []
+}, {
+  UPDATE_OP_USERNAME: 'update',
+  EDIT_CONTENT: 'update',
+  DELETE: 'clear'
+}, { /* This is where customHandlers would go */ }, {
+  comments
+})
 ```

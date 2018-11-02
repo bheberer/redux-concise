@@ -29,6 +29,9 @@ export const updateObjectProps = (state, action) => ({
 
 export const clearObject = (state, action) => ({})
 
-export const overrideStateProp = action => action.payload
+export const overrideStateProp = (state, action) =>
+  typeof action.payload === 'function'
+    ? action.payload(state)
+    : action.payload
 
 export const resetState = initialState => initialState
