@@ -36,13 +36,17 @@ const todos = createArrReducer([], {
 })
 ```
 
+Let's break this down. In this example, both reducer creators are taking two arguments. The first is simply the initialState. The second argument is an object that maps action types to handler functions that return the next state. These functions are built in to the reducer creators, and are therefore referred to as default handlers.
+
 ## Actions
 
-This concision is achieved through some basic assumptions that the reducers make about the actions that they recieve. For the most part, they expect to recieve actions that follow the [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) rules, with one exception. Below are tables showing what fields are required for each default action in redux-func.
+This concision is possible because of the basic assumptions that the default handlers make about the actions that the output reducer will receive. For the most part, they expect to recieve actions that follow the [Flux Standard Action](https://github.com/redux-utilities/flux-standard-action) rules, with one exception.
+
+Below are tables showing what actions are handled by default for each reducer creator and what needs to be included in each action.
 
 ### Boolean Actions:
 
-| Name   | Type | Payload | Index |
+| Handler Name   | Type | Payload | Index |
 | ------ | :--: | :-----: | :---: |
 | true   | yes  |   no    |  no   |
 | false  | yes  |   no    |  no   |
@@ -51,14 +55,14 @@ This concision is achieved through some basic assumptions that the reducers make
 
 ### Value Actions:
 
-| Name   | Type | Payload | Index |
+| Handler Name   | Type | Payload | Index |
 | ------ | :--: | :-----: | :---: |
 | update | yes  |   yes   |  no   |
 | reset  | yes  |   no    |  no   |
 
 ### Array Actions:
 
-| Name        | Type | Payload | Index |
+| Handler Name        | Type | Payload | Index |
 | ----------- | :--: | :-----: | :---: |
 | push        | yes  |   yes   |  no   |
 | pop         | yes  |   no    |  no   |
@@ -71,7 +75,7 @@ This concision is achieved through some basic assumptions that the reducers make
 
 ### Object Actions:
 
-| Name   | Type | Payload | Index |
+| Handler Name   | Type | Payload | Index |
 | ------ | :--: | :-----: | :---: |
 | update | yes  |   yes   |  no   |
 | reset  | yes  |   no    |  no   |
@@ -177,7 +181,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Action | Description                                           |
+| Name | Description                                           |
 | ------ | :---------------------------------------------------- |
 | update | updates value with payload (can be value or function) |
 | reset  | reset value to initial state                          |
@@ -209,7 +213,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Action | Description                    |
+| Name | Description                    |
 | ------ | :----------------------------- |
 | true   | sets boolean to true           |
 | false  | sets boolean to false          |
@@ -239,7 +243,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Action      | Description                                                     |
+| Name      | Description                                                     |
 | ----------- | :-------------------------------------------------------------- |
 | push        | push payload to end of array                                    |
 | pop         | remove element from end of array                                |
@@ -276,7 +280,7 @@ Higher order function that accepts an initialState value, an object of action ty
 
 ### Default Action Handlers:
 
-| Action | Description                     |
+| Name | Description                     |
 | ------ | :------------------------------ |
 | update | spreads payload to state object |
 | clear  | empties state object            |
