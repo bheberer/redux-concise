@@ -93,7 +93,7 @@ As an example, the standard `push` handler in redux-func adds a value to the bac
 const reducer = createArrReducer([], { 
   ADD_TO_FRONT: 'addToFront' 
 }, { 
-  addToFront: (state, action) => [...state, action.payload] 
+  addToFront: (state, action) => [action.payload, ...state] 
 })
 ```
 
