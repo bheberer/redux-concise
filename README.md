@@ -14,7 +14,7 @@ npm install --save redux-concise
 
 ## Data Structures
 
-redux-func contains reducer creators for the following data structures:
+redux-concise contains reducer creators for the following data structures:
 
 - Boolean
 - Value
@@ -23,7 +23,7 @@ redux-func contains reducer creators for the following data structures:
 
 ## Example
 
-Let's create the reducers for the todo app written in the [Redux documentation](https://redux.js.org/basics/reducers) with redux-func so we can see how concise we can get our code to be.
+Let's create the reducers for the todo app written in the [Redux documentation](https://redux.js.org/basics/reducers) with redux-concise so we can see how concise we can get our code to be.
 
 ```js
 const visibilityFilter = createValReducer(SHOW_ALL, {
@@ -98,9 +98,9 @@ updateIndexAction = {
 
 ## Customizing Your Reducers
 
-While I've tried my best to include a lot of the most common use cases in redux-func, there's more than likely going to be times where redux-func doesn't include an action that you want to use. Because of this, I've included an extra parameter to all redux-func reducers called `customHandlers`, which is an object in which you can include whatever custom action handler functions you want and use them in the same way you would use the standard, included handlers.
+While I've tried my best to include a lot of the most common use cases in redux-concise, there's more than likely going to be times where redux-concise doesn't include an action that you want to use. Because of this, I've included an extra parameter to all redux-concise reducers called `customHandlers`, which is an object in which you can include whatever custom action handler functions you want and use them in the same way you would use the standard, included handlers.
 
-As an example, the standard `push` handler in redux-func adds a value to the back of an array. Now, you want to add something to the front of the array instead. Here's how you would do it.
+As an example, the standard `push` handler in redux-concise adds a value to the back of an array. Now, you want to add something to the front of the array instead. Here's how you would do it.
 
 ```js
 const reducer = createArrReducer([], {
