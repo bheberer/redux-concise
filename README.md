@@ -26,17 +26,24 @@ redux-concise contains reducer creators for the following data structures:
 Let's create the reducers for the todo app written in the [Redux documentation](https://redux.js.org/basics/reducers) with redux-concise so we can see how concise we can get our code to be.
 
 ```js
+import { 
+  createValReducer, 
+  createArrReducer
+} from 'redux-concise'
+
 const visibilityFilter = createValReducer(SHOW_ALL, {
   SET_VISIBILITY_FILTER: 'update'
 })
 
 const todos = createArrReducer([], {
   ADD_TODO: 'push',
-  TOGGLE_TODO: 'updateValueAtIndex'
+  TOGGLE_TODO: 'updateIndex'
 })
 ```
 
-Let's break this down. In this example, both reducer creators are taking two arguments. The first is simply the initialState. The second argument is an object that maps action types to handler functions that return the next state. These functions are built in to the reducer creators, and are therefore referred to as default handlers.
+Let's break this down. In this example, both reducer creators are taking two arguments. The first is simply the initialState. The second argument is an object that maps action types to handler functions that return the next state. These functions are built in to the reducer creators, and are therefore referred to as default handlers. 
+
+You can either use raw strings in order to assign these handler functions to the appropriate action type, or you can import the built in `HandlerTypes` object from `redux-concise`, which already includes strings for all of the default handlers. From now on, we're going to be sticking with using `HandlerTypes`, because it gives us the autocomplete and makes it harder to make silly typos.
 
 ## Actions
 
@@ -103,8 +110,18 @@ While I've tried my best to include a lot of the most common use cases in redux-
 As an example, the standard `push` handler in redux-concise adds a value to the back of an array. Now, you want to add something to the front of the array instead. Here's how you would do it.
 
 ```js
+import { 
+  createArrReducer, 
+  HandlerTypes 
+} from 'redux-concise'
+
+ArrHandlerTypes = {
+  ...HandlerTypes,
+  addToFront: 'addToFront'
+}
+
 const reducer = createArrReducer([], {
-  ADD_TO_FRONT: 'addToFront'
+  ADD_TO_FRONT: ArrHandlerTypes.addToFront
 }, {
   addToFront: (state, action) => [action.payload, ...state]
 })
@@ -115,14 +132,25 @@ const reducer = createArrReducer([], {
 Lets say we're trying to create a Twitter-like app. We might want to have a slice of state for a post that includes the user that create the post, the content of the post, as well as the comments associated with that post. Let's create this slice of state with our `createObjRedcuer` function. (Note that this wouldn't be an ideal way to shape this state. See the [redux docs](https://redux.js.org/recipes/structuringreducers/normalizingstateshape) for more info, just using this as an example)
 
 ```js
+import { 
+  createObjReducer, 
+  HandlerTypes 
+} from 'redux-concise'
+
+const PostHandlerTypes = { 
+  ...HandlerTypes, 
+  addComment: 'addComment', 
+  editComment: 'editComment
+}
+
 const post = createObjReducer({
   user: 'bheberer',
   content: 'hey there',
   comments: []
 }, {
-  EDIT_CONTENT: 'update',
-  ADD_COMMENT: 'addComment',
-  EDIT_COMMENT: 'editComment'
+  EDIT_CONTENT: PostHandlerTypes.update,
+  ADD_COMMENT: PostHandlerTypes.addComment,
+  EDIT_COMMENT: PostHandlerTypes.editComment
 }, {
   addComment: (state, action) => {
     ...state,
@@ -145,9 +173,15 @@ Because our comments array is contained within this state object, we have to man
 In order to utilize this already built-in functionality, I've introduced the concept of `innerReducers` to `createObjReducer`. `innerReducers` is an extra argument for `createObjReducer` that lets you use compeletely separate reducers for certain properties within your output state object. Let's create the same slice of state using `innerReducers`.
 
 ```js
+import { 
+  createArrReducer,
+  createObjReducer, 
+  HandlerTypes 
+} from 'redux-concise'
+
 const comments = createArrReducer([], {
-  ADD_COMMENT: 'push',
-  EDIT_COMMENT: 'updateIndex'
+  ADD_COMMENT: HandlerTypes.push,
+  EDIT_COMMENT: HandlerTypes.updateIndex
 })
 
 const post = createObjReducer({
@@ -155,7 +189,7 @@ const post = createObjReducer({
   content: 'hey there',
   comments: []
 }, {
-  EDIT_CONTENT: 'update'
+  EDIT_CONTENT: HandlerTypes.update
 }, {
   /* This is where customHandlers would go */
 }, {
@@ -189,10 +223,21 @@ Higher order function that accepts an initialState value, an object of action ty
 Example usage:
 
 ```js
+import { 
+  createValueReducer,
+  HandlerTypes 
+} from 'redux-concise'
+
+const CounterHandlerTypes = { 
+  ...HandlerTypes,
+   increment: 'increment', 
+   decrement: 'decrement' 
+}
+
 const counter = createValueReducer(0, {
-  INCREMENT: 'increment',
-  DECREMENT: 'decrement',
-  RESET: 'reset'
+  INCREMENT: CounterHandlerTypes.increment,
+  DECREMENT: CounterHandlerTypes.decrement,
+  RESET: CounterHandlerTypes.reset
 }, {
   increment: (state, action) => action.payload + 1,
   decrement: (state, action) => action.payload - 1
@@ -223,9 +268,14 @@ Higher order function that accepts an initialState value, an object of action ty
 Example usage:
 
 ```js
+import { 
+  createBoolReducer,
+  HandlerTypes 
+} from 'redux-concise'
+
 const isFetching = createBoolReducer(false, {
-  FETCHING: 'true',
-  RECEIVED: 'false'
+  FETCHING: HandlerTypes.true,
+  RECEIVED: HandlerTypes.false
 })
 ```
 
@@ -257,11 +307,16 @@ Higher order function that accepts an initialState value, an object of action ty
 Example usage:
 
 ```js
+import {
+  createArrReducer,
+  HandlerTypes
+} from 'redux-concise'
+
 const comments = createArrReducer([], {
-  ADD_COMMENT: 'push',
-  DELETE_COMMENT: 'filter',
-  EDIT_COMMENT: 'updateIndex',
-  DELETE_ALL_COMMENTS: 'clear'
+  ADD_COMMENT: HandlerTypes.push,
+  DELETE_COMMENT: HandlerTypes.filter,
+  EDIT_COMMENT: HandlerTypes.updateIndex,
+  DELETE_ALL_COMMENTS: HandlerTypes.clear
 })
 ```
 
@@ -289,11 +344,17 @@ Higher order function that accepts an initialState value, an object of action ty
 Example usage:
 
 ```js
+import { 
+  createArrReducer,
+  createObjReducer, 
+  HandlerTypes 
+} from 'redux-concise'
+
 const comments = createArrReducer([], {
-  ADD_COMMENT: 'push',
-  DELETE_COMMENT: 'filter',
-  EDIT_COMMENT: 'updateIndex',
-  DELETE_ALL_COMMENTS: 'clear'
+  ADD_COMMENT: HandlerTypes.push,
+  DELETE_COMMENT: HandlerTypes.filter,
+  EDIT_COMMENT: HandlerTypes.updateIndex,
+  DELETE_ALL_COMMENTS: HandlerTypes.clear
 })
 
 const post = createObjReducer({
@@ -301,9 +362,9 @@ const post = createObjReducer({
   content: 'first',
   comments: []
 }, {
-  UPDATE_OP_USERNAME: 'update',
-  EDIT_CONTENT: 'update',
-  DELETE: 'clear'
+  UPDATE_OP_USERNAME: HandlerTypes.update,
+  EDIT_CONTENT: HandlerTypes.update,
+  DELETE: HandlerTypes.clear
 }, {
   /* This is where customHandlers would go */
 }, {
