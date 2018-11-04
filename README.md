@@ -140,7 +140,7 @@ import {
 const PostHandlerTypes = { 
   ...HandlerTypes, 
   addComment: 'addComment', 
-  editComment: 'editComment
+  editComment: 'editComment'
 }
 
 const post = createObjReducer({
